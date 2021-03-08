@@ -19,7 +19,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::with('skills', 'country')->get();
+        $user = User::with('skills', 'country')->latest()->get();
         return $user;
     }
 
@@ -65,14 +65,14 @@ class UserController extends Controller
         }
         $user->update($request->all());
         if ($request->has('name')) {
-            $country = Country::updateOrCreate(
+            $country = Country::firstOrCreate(
                 ['name' => $request->name]
             );
             $user->country()->associate($country->id);
             $user->save();
         }
         if ($request->has('title') && $request->has('level')) {
-            $skill = Skill::updateOrCreate(
+            $skill = Skill::firstOrCreate(
                 ['title' => $request->title]
             );
             $user->skills()->detach();
